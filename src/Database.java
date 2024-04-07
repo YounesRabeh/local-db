@@ -3,8 +3,7 @@ import java.io.IOException;
 import static explorer.FileManager.createEmptyFileIfNotExists;
 import static explorer.PathResolver.createDirectory;
 
-abstract class Database<R extends Record> implements DbInfo {
-    private static Integer idPool = 0;
+abstract class Database<R extends Record> {
 
     private final String USERNAME;
     private final String PASSWORD;
@@ -28,9 +27,6 @@ abstract class Database<R extends Record> implements DbInfo {
     // Abstract method to create tables and define constraints
     protected abstract void createTables();
 
-    public Integer assignID() {
-        return idPool++;
-    }
 
     public void dbInit(){
     }
