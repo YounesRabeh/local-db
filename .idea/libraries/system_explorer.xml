@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="system-explorer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../system-explorer/out/artifacts/system_explorer_jar/system-explorer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
