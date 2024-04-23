@@ -34,7 +34,6 @@ public class Table {
         this.tableName = tableName;
         this.columnConstrains = columnConstrainsSetup(columns);
         this.originalColumnsConstrainsRef = columns;
-        //FIXME: doesn't create the file in the dir
         TABLE_FILE = assignTableFile(this);
     }
 
