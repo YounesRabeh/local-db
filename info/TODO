@@ -1,0 +1,2 @@
+make systemx.exceptions.InterfaceError public
+abstract the error colors, emojis and messages in an interface

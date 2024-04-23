@@ -1,5 +1,7 @@
 package db.structure;
 
+import systemx.exceptions.DoNotExistsException;
+
 import java.util.*;
 
 public class DataBase {
@@ -112,8 +114,11 @@ public class DataBase {
      * Returns the table with the given name
      * @param tableName The name of the table to return
      * @return The table with the given name
+     * @throws DoNotExistsException If the table does not exist in the database
      */
-    public Table getTable(String tableName) {
-        return dbTables.get(tableName);
+    public Table getTable(String tableName) throws DoNotExistsException {
+        Table table = dbTables.get(tableName);
+        if (table == null) throw new DoNotExistsException(tableName);
+        return table;
     }
 }
