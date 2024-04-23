@@ -9,11 +9,12 @@ import rules.constrains.Constraint;
 import rules.constrains.Constraints;
 import rules.exceptions.NotUniqueException;
 import systemx.exceptions.DoNotExistsException;
-import systemx.exceptions.FailedToCreateException;
 
 import static environment.WorkspaceMaker.assignTableFile;
 
-
+/**
+ * Represents a table in a database, with columns and rows.
+ */
 public class Table {
     /** The name of the table */
     private final String tableName;
@@ -21,7 +22,7 @@ public class Table {
     private Constraints columnConstrains;
     /** The original ref columns of the table */
     private Constraints originalColumnsConstrainsRef;
-
+    /** The file of the table */
     private final File TABLE_FILE;
 
     /**
@@ -29,8 +30,7 @@ public class Table {
      * @param tableName The name of the table
      * @param columns The columns of the table
      */
-    public Table(String tableName, Constraints columns) throws
-            NotUniqueException, FailedToCreateException, DoNotExistsException {
+    public Table(String tableName, Constraints columns) throws NotUniqueException {
         this.tableName = tableName;
         this.columnConstrains = columnConstrainsSetup(columns);
         this.originalColumnsConstrainsRef = columns;
@@ -117,10 +117,11 @@ public class Table {
 
 
     ///////////////////////////////////////////////////////////////////////////////////
+    //TODO: Row related methods
 
     public Tuple getTuple(int index) throws DoNotExistsException {
         //TODO: don't cast to Object cast each element to the correct type
-       return new Tuple((Object) TableTools.getRow(this.TABLE_FILE, index));
+       return new Tuple(TableTools.getRow(this.TABLE_FILE, index));
     }
 
 
@@ -149,4 +150,6 @@ public class Table {
     public boolean equals(Object obj) {
         return obj instanceof Table && ((Table) obj).getName().equalsIgnoreCase(tableName);
     }
+
+
 }
