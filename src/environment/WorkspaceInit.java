@@ -16,7 +16,6 @@ public class WorkspaceInit implements DatabaseLocations {
     private WorkspaceInit() {
         try {
             this.WORKSPACE = new File("out/artifacts/local_db_jar" + "/localDB/");
-            //FIXME: don't throw Failed to create exception, ignore (systemx bug)
             PathResolver.createDirectory(this.WORKSPACE.getAbsolutePath());
         } catch (Exception e) {
             throw new RuntimeException(e);
