@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import db.objects.Tuple;
-import db.tools.DbTools;
+import db.tools.TableTools;
 import rules.constrains.Constraint;
 import rules.constrains.Constraints;
 import rules.exceptions.NotUniqueException;
@@ -121,7 +121,7 @@ public class Table {
 
     public Tuple getTuple(int index) throws DoNotExistsException {
         //TODO: don't cast to Object cast each element to the correct type
-       return new Tuple((Object) DbTools.getRow(this.TABLE_FILE, index));
+       return new Tuple((Object) TableTools.getRow(this.TABLE_FILE, index));
     }
 
 

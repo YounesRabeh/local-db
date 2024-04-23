@@ -9,7 +9,10 @@ import java.io.File;
 
 public final class WorkspaceMaker{
 
-    public static File assignTableFile(Table table) throws FailedToCreateException, DoNotExistsException {
-        return PathResolver.createFileInDirectory(table.getName() + ".csv", WorkspaceInit.getInstance().getWorkspaceLocation());
+    public static File assignTableFile(Table table) {
+        File path = WorkspaceInit.getInstance().getWorkspaceLocation();
+        return new File( path +
+                        File.separator + table.getName() + ".csv"
+        );
     }
 }

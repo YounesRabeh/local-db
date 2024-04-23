@@ -2,6 +2,7 @@ package environment;
 
 import systemx.exceptions.FailedToCreateException;
 import systemx.utils.PathResolver;
+import tests.test;
 
 import java.io.File;
 
@@ -14,10 +15,10 @@ public class WorkspaceInit implements DatabaseLocations {
     // Private constructor to prevent instantiation from outside
     private WorkspaceInit() {
         try {
-            this.WORKSPACE = new File("out/tests/");
+            this.WORKSPACE = new File("out/artifacts/local_db_jar" + "/localDB/");
             //FIXME: don't throw Failed to create exception, ignore (systemx bug)
-            PathResolver.createDirectory(this.WORKSPACE.getAbsolutePath() + "/localDB/");
-        } catch (FailedToCreateException e) {
+            PathResolver.createDirectory(this.WORKSPACE.getAbsolutePath());
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

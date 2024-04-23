@@ -24,7 +24,9 @@ public class test {
             );
 
             DataBase db = new DataBase("db",
-                    new Table("table", columns)
+                    new Table("table1", columns),
+                    new Table("table2", columns),
+                    new Table("table3", columns)
             );
 
             columns.addConstraint(new Constraint("height", Float.class));
@@ -38,18 +40,11 @@ public class test {
             tables.getFirst().useOriginalColumnsRef();
             tables.getFirst().overrideColumns(new Constraints(
                     new Constraint("weight", Float.class),
-                    new Constraint("weight", String.class),
+                    new Constraint("sport", String.class),
                     new Constraint("phone", String.class)
             ));
             for (Constraint column : tables.getFirst().getColumnsConstraints()) {
                 System.out.println(column.getName());
-            }
-
-            try {
-                Table table = db.getTable("e");
-                System.out.println("\ntable name is : " + table.getName());
-            } catch (DoNotExistsException e) {
-                System.out.println(e.getMessage());
             }
 
         } catch (NotUniqueException e ){
