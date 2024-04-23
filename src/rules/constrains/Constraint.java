@@ -15,7 +15,7 @@ public class Constraint {
      * @param dataType The data type of the constraint <b> -your object-.class</b>
      */
     public Constraint(String name, Class<?> dataType) {
-        this.name = name.toUpperCase();
+        this.name = name;
         this.dataTypeString = dataType.getSimpleName();
         this.dataType = dataType;
     }
@@ -44,4 +44,13 @@ public class Constraint {
         return dataType;
     }
 
+    /**
+     * Two constraints are equal if they have the same name (case-insensitive).
+     * @param obj The object to compare
+     * @return True if the constraints are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Constraint && name.equalsIgnoreCase(((Constraint) obj).name);
+    }
 }

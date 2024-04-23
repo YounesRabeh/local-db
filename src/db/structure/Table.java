@@ -4,6 +4,7 @@ import java.util.List;
 
 import rules.constrains.Constraint;
 import rules.constrains.Constraints;
+import rules.exceptions.NotUniqueException;
 
 
 public class Table {
@@ -19,21 +20,30 @@ public class Table {
      * @param tableName The name of the table
      * @param columns The columns of the table
      */
-    public Table(String tableName, Constraints columns) {
+    public Table(String tableName, Constraints columns) throws NotUniqueException {
         this.tableName = tableName;
+        this.columnConstrains = columnConstrainsSetup(columns);
+        this.originalColumnsConstrainsRef = columns;
+    }
+
+    /**
+     * Set up the columns of the table
+     * @param columns The columns to set up
+     * @return The columns setup
+     */
+    private Constraints columnConstrainsSetup(Constraints columns) throws NotUniqueException {
         final Constraints columnsCopy = new Constraints();
         for (Constraint column : columns.getConstraints()) {
             columnsCopy.addConstraint(new Constraint(column.getName(), column.getDataType()));
         }
-        this.columnConstrains = columnsCopy;
-        this.originalColumnsConstrainsRef = columns;
+        return columnsCopy;
     }
 
     /**
      * Adds columns to the table
      * @param columns The columns to add
      */
-    public void addColumn(Constraint... columns) {
+    public void addColumn(Constraint... columns) throws NotUniqueException {
         for (Constraint column : columns) {
             this.columnConstrains.addConstraint(column);
         }
@@ -43,19 +53,24 @@ public class Table {
      * Adds a list of columns to the table
      * @param columns The list of  columns to add
      */
-    public void addColumn(List<Constraint> columns) {
+    public void addColumn(List<Constraint> columns) throws NotUniqueException {
         for (Constraint column : columns) {
             this.columnConstrains.addConstraint(column);
         }
     }
 
     /**
-     * Uses the original columns reference
+     * Uses the original columns reference, discarding the current columns and
+     * using the original columns reference (which can be modified independently of the table)
      */
     public void useOriginalColumnsRef() {
         this.columnConstrains = originalColumnsConstrainsRef;
     }
 
+    /**
+     * Overrides the columns of the table with the given columns
+     * @param columns The columns to override
+     */
     public void overrideColumns(Constraints columns) {
         this.columnConstrains = columns;
     }
@@ -64,7 +79,7 @@ public class Table {
      * Deletes columns from the table
      * @param columns The columns to delete
      */
-    public void deleteColumn(Constraint... columns) {
+    public void deleteColumn(Constraint... columns) throws NotUniqueException {
         for (Constraint column : columns) {
            this.columnConstrains.deleteConstraint(column);
         }
@@ -74,7 +89,7 @@ public class Table {
      * Deletes a list of columns from the table
      * @param columns The list of columns to delete
      */
-    public void deleteColumn(List<Constraint> columns) {
+    public void deleteColumn(List<Constraint> columns) throws NotUniqueException {
         for (Constraint column : columns) {
            this.columnConstrains.deleteConstraint(column);
         }
