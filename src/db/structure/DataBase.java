@@ -114,8 +114,8 @@ public class DataBase {
      * Returns the tables of the database
      * @return The tables of the database
      */
-    public List<Table> getDbTables() {
-        return new ArrayList<>(dbTables.values());
+    public HashMap<String, Table> getDbTables() {
+        return dbTables;
     }
 
     /**

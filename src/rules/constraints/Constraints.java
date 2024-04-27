@@ -1,4 +1,4 @@
-package rules.constrains;
+package rules.constraints;
 
 import rules.exceptions.ConstraintsErrors;
 import rules.exceptions.NotUniqueException;

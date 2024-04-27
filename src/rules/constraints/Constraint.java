@@ -1,4 +1,4 @@
-package rules.constrains;
+package rules.constraints;
 
 /**
  * A constraint in a database table (a column).

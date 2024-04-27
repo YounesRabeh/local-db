@@ -17,4 +17,16 @@ public final class TableTools {
     public static String[] getRow(File file, int index) throws DoNotExistsException {
         return CsvTools.getRow(file, index);
     }
+
+    /**
+     * Changes the fist row of the table (the column names).
+     * First it deletes any present data the first row and then inserts a new one.
+     * @param file The file of the table
+     * @param columnNames The column names of the table
+     * @throws DoNotExistsException If the file does not exist
+     */
+    public static void columnsSetup(File file, String[] columnNames) throws DoNotExistsException {
+        CsvTools.deleteRow(file, 0);
+        CsvTools.insertRow(file, 0,columnNames);
+    }
 }
