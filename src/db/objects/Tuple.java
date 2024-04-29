@@ -4,13 +4,12 @@ import rules.constraints.Constraint;
 import rules.constraints.Constraints;
 import systemx.exceptions.DoNotExistsException;
 
-import java.util.List;
 
 /**
  * A tuple of values, used to represent a row in a database. The values are stored as strings.
  * @param values The values of the tuple
  */
-public record Tuple(String[] columnNames, String... values) {
+public record Tuple(Constraints constraints, String... values) {
 
     /**
      * Gets the value at the given index
@@ -32,10 +31,12 @@ public record Tuple(String[] columnNames, String... values) {
      * @throws DoNotExistsException If the column does not exist
      */
     public String getValue(String columnName) throws DoNotExistsException {
-        for (int i = 0; i < columnNames.length; i++) {
-            if (columnNames[i].equalsIgnoreCase(columnName)) {
-                return values[i];
+        int num = 0;
+        for (Constraint column : constraints.getConstraints()) {
+            if (column.getName().equalsIgnoreCase(columnName)) {
+                return values[num];
             }
+            num++;
         }
         //TODO: Add custom exception
         throw new DoNotExistsException("The column " + columnName + " does not exist in the tuple");

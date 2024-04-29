@@ -1,9 +1,9 @@
 package db.tools;
 
-import systemx.exceptions.DoNotExistsException;
 import systemx.utils.CsvTools;
-
 import java.io.File;
+
+import systemx.exceptions.DoNotExistsException;
 
 public final class TableTools {
     private TableTools() {}
@@ -25,8 +25,8 @@ public final class TableTools {
      * @param columnNames The column names of the table
      * @throws DoNotExistsException If the file does not exist
      */
-    public static void columnsSetup(File file, String[] columnNames) throws DoNotExistsException {
+    public static void columnNamesSetup(File file, String[] columnNames) throws DoNotExistsException {
         CsvTools.deleteRow(file, 0);
-        CsvTools.insertRow(file, 0,columnNames);
+        CsvTools.insertRow(file, 0, columnNames);
     }
 }

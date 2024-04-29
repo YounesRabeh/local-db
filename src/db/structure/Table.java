@@ -39,7 +39,7 @@ public class Table {
         this.columnConstrains = columnConstrainsSetup(columns);
         this.originalColumnsConstrainsRef = columns;
         TABLE_FILE = assignTableFile(this);
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -63,7 +63,7 @@ public class Table {
         for (Constraint column : columns) {
             this.columnConstrains.addConstraint(column);
         }
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -74,7 +74,7 @@ public class Table {
         for (Constraint column : columns) {
             this.columnConstrains.addConstraint(column);
         }
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -83,7 +83,7 @@ public class Table {
      */
     public void useOriginalColumnsRef() throws DoNotExistsException {
         this.columnConstrains = originalColumnsConstrainsRef;
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -92,7 +92,7 @@ public class Table {
      */
     public void overrideColumns(Constraints columns) throws DoNotExistsException {
         this.columnConstrains = columns;
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -103,7 +103,7 @@ public class Table {
         for (Constraint column : columns) {
            this.columnConstrains.deleteConstraint(column);
         }
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -114,7 +114,7 @@ public class Table {
         for (Constraint column : columns) {
            this.columnConstrains.deleteConstraint(column);
         }
-        TableTools.columnsSetup(TABLE_FILE, getColumnNames());
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
     /**
@@ -127,17 +127,10 @@ public class Table {
 
     /**
      * Returns the names of the columns of the table
-     * @return The names of the columns of the table
+     * @return The columns names array of the table
      */
-    public String[] getColumnNames() {
-        List<Constraint> columns = columnConstrains.getConstraints();
-        final int SIZE = columns.size();
-        String[] columnNames = new String[SIZE];
-
-        for (int column = 0; column < SIZE; column++) {
-            columnNames[column] = columns.get(column).getName();
-        }
-        return columnNames;
+    public String[] getColumnNames() throws DoNotExistsException {
+        return TableTools.getRow(this.TABLE_FILE, COLUMN_NAMES_INDEX);
     }
 
     /**
@@ -179,7 +172,7 @@ public class Table {
      *
      */
     public Tuple getTuple(int index) throws DoNotExistsException {
-        return new Tuple(this.getColumnNames(), TableTools.getRow(this.TABLE_FILE, index));
+        return new Tuple(columnConstrains, TableTools.getRow(this.TABLE_FILE, index));
     }
 
     /**

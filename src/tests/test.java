@@ -47,7 +47,7 @@ public class test {
             ));
 
             final String TABLE_NAME = "table3";
-            final String COLUMN_NAME = "weigt";
+            final String COLUMN_NAME = "weight";
 
             Table tb = tables.get(TABLE_NAME);
             for (Constraint column : tables.get(TABLE_NAME).getColumnsConstraints()) {
