@@ -1,7 +1,7 @@
 package db.structure;
 
-import java.io.File;
 import java.util.List;
+import java.io.File;
 
 import db.objects.Tuple;
 import db.tools.TableTools;
@@ -22,7 +22,7 @@ public class Table {
     /** The columns of the table */
     private Constraints columnConstrains;
     /** The original ref columns of the table */
-    private Constraints originalColumnsConstrainsRef;
+    private final Constraints originalColumnsConstrainsRef;
     /** The file of the table */
     private final File TABLE_FILE;
     /** The index of the column names */
@@ -111,10 +111,7 @@ public class Table {
      * @param columns The list of columns to delete
      */
     public void deleteColumn(List<Constraint> columns) throws NotUniqueException, DoNotExistsException {
-        for (Constraint column : columns) {
-           this.columnConstrains.deleteConstraint(column);
-        }
-        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
+        deleteColumn(columns.toArray(new Constraint[0]));
     }
 
     /**
@@ -147,6 +144,7 @@ public class Table {
         }
         return columnTypes;
     }
+
     /**
      * Returns the data type of the column
      * @param columnName The name of the column
@@ -165,7 +163,50 @@ public class Table {
     //TODO: Row related methods
 
     /**
-     * Get the tuple at the given index. <b>(Index 0) is the column names</b> {@link #COLUMN_NAMES_INDEX}
+     * Adds a tuple to the table
+     * @param tuple The tuple to add
+     * @throws DoNotExistsException If the tuple is null or the table does not exist
+     */
+    public void addTuple(Tuple tuple) throws DoNotExistsException {
+        if (tuple == null) throw new DoNotExistsException("Tuple is null");
+        TableTools.addRow(TABLE_FILE, tuple.values());
+    }
+
+    /**
+     * Adds a collection of tuples to the table
+     * @param tuples The collection of tuples to add
+     * @throws DoNotExistsException If one of the tuples is null or the table does not exist
+     */
+    public void addTuples(List<Tuple> tuples) throws DoNotExistsException {
+        for (Tuple tuple : tuples) {
+            addTuple(tuple);
+        }
+    }
+
+    /**
+     * Deletes the tuple at the given index
+     * @param index The index of the tuple to delete
+     * @throws DoNotExistsException If the tuple does not exist
+     */
+    public void deleteTuple(int index) throws DoNotExistsException {
+        TableTools.deleteRow(TABLE_FILE, index);
+    }
+
+    /**
+     * Deletes a list of tuples from the table
+     * @param indexes The indexes of the tuples to delete
+     * @throws DoNotExistsException If one of the tuples does not exist
+     */
+    public void deleteTuples(List<Integer> indexes) throws DoNotExistsException {
+        for (int index : indexes) {
+            deleteTuple(index);
+        }
+    }
+
+    //TODO: add the get-delete methods utilizing the primary key of the table
+
+    /**
+     * Get the tuple at the given index. <b>(Index 0) is the column names</b> {@link #COLUMN_NAMES_INDEX}.
      * @param index The row index of the tuple
      * @return The tuple at the given row index
      * @throws DoNotExistsException If the tuple does not exist
@@ -192,7 +233,7 @@ public class Table {
     }
 
     /**
-     * Equals method for the table. Two tables are considered equal if their names are equal. Case-insensitive.
+     * Equals method for the table. Two tables are considered equal if their names are equal. <b>Case-insensitive.</b>
      * @param obj The object to compare
      * @return True if the object is a table and has the same name as this table
      */
@@ -200,6 +241,4 @@ public class Table {
     public boolean equals(Object obj) {
         return obj instanceof Table && ((Table) obj).getName().equalsIgnoreCase(tableName);
     }
-
-
 }
