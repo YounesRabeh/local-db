@@ -1,6 +1,8 @@
 package tests;
 
 import java.util.HashMap;
+
+import db.objects.Tuple;
 import db.structure.DataBase;
 import db.structure.Table;
 import environment.WorkspaceInit;
@@ -43,7 +45,10 @@ public class test {
                     new Constraint("address", String.class),
                     new Constraint("phone", String.class)
             );
-            tb.addColumn(new Constraint("sport", String.class));
+            //tb.addColumn(new Constraint("sport", String.class));
+            String[] values = {"Salvini", "48", "matteo.lega.it", "1.78", "Via Roma 1", "1234567890"};
+            tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
+            tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
 
             //tables.get("table1").useOriginalColumnsRef();
 //            tables.get("table3").overrideColumns(new Constraints(

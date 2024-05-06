@@ -191,6 +191,7 @@ public class Table {
     public void addTuple(Tuple tuple) throws DoNotExistsException {
         if (tuple == null) throw new DoNotExistsException("Tuple is null");
         if (tuple.values().length != columnConstrains.getConstraints().size()) {
+            //TODO: add the possibility to add a tuple with less/more values than the columns
             throw new DoNotExistsException("Tuple values do not match the columns of the table");
         } //FIXME: check if the values are cast-able to the column data types
         TableTools.addRow(TABLE_FILE, tuple.values());
