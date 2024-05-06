@@ -5,8 +5,9 @@ import java.io.File;
 
 import db.objects.Tuple;
 import db.tools.TableTools;
-import rules.constraints.Constraint;
-import rules.constraints.Constraints;
+import environment.WorkspaceMaker;
+import rules.notes.Constraint;
+import rules.notes.Constraints;
 import rules.exceptions.NotUniqueException;
 import systemx.exceptions.DoNotExistsException;
 import systemx.exceptions.FailedToCreateException;
@@ -38,7 +39,9 @@ public class Table {
         this.tableName = tableName;
         this.columnConstrains = columnConstrainsSetup(columns);
         this.originalColumnsConstrainsRef = columns;
+        //FIXME: the table file is created even if the table is not added to the database
         TABLE_FILE = assignTableFile(this);
+        //WorkspaceMaker.createTableFile(TABLE_FILE);
         TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
@@ -116,9 +119,17 @@ public class Table {
 
     /**
      * Returns the columns constraints of the table
+     * @return The columns constraints of the table
+     */
+    public Constraints getColumnsConstraints() {
+        return columnConstrains;
+    }
+
+    /**
+     * Returns the columns constraints of the table
      * @return The list of columns constraints of the table
      */
-    public List<Constraint> getColumnsConstraints() {
+    public List<Constraint> getColumnsConstraintsList() {
         return columnConstrains.getConstraints();
     }
 
@@ -127,7 +138,17 @@ public class Table {
      * @return The columns names array of the table
      */
     public String[] getColumnNames() throws DoNotExistsException {
-        return TableTools.getRow(this.TABLE_FILE, COLUMN_NAMES_INDEX);
+        if (columnConstrains.getConstraintsNames().isEmpty()){
+            return TableTools.getRow(this.TABLE_FILE, COLUMN_NAMES_INDEX);
+        }
+        List<Constraint> columns = columnConstrains.getConstraints();
+        final int SIZE = columns.size();
+        String[] columnNames = new String[SIZE];
+
+        for (int column = 0; column < SIZE; column++) {
+            columnNames[column] = columns.get(column).getName();
+        }
+        return columnNames;
     }
 
     /**
@@ -169,6 +190,9 @@ public class Table {
      */
     public void addTuple(Tuple tuple) throws DoNotExistsException {
         if (tuple == null) throw new DoNotExistsException("Tuple is null");
+        if (tuple.values().length != columnConstrains.getConstraints().size()) {
+            throw new DoNotExistsException("Tuple values do not match the columns of the table");
+        } //FIXME: check if the values are cast-able to the column data types
         TableTools.addRow(TABLE_FILE, tuple.values());
     }
 
@@ -194,16 +218,20 @@ public class Table {
 
     /**
      * Deletes a list of tuples from the table
-     * @param indexes The indexes of the tuples to delete
+     * @param indices The indices of the tuples to delete
      * @throws DoNotExistsException If one of the tuples does not exist
      */
-    public void deleteTuples(List<Integer> indexes) throws DoNotExistsException {
-        for (int index : indexes) {
+    public void deleteTuples(List<Integer> indices) throws DoNotExistsException {
+        for (int index : indices) {
             deleteTuple(index);
         }
     }
 
     //TODO: add the get-delete methods utilizing the primary key of the table
+
+
+
+
 
     /**
      * Get the tuple at the given index. <b>(Index 0) is the column names</b> {@link #COLUMN_NAMES_INDEX}.
@@ -214,6 +242,21 @@ public class Table {
      */
     public Tuple getTuple(int index) throws DoNotExistsException {
         return new Tuple(columnConstrains, TableTools.getRow(this.TABLE_FILE, index));
+    }
+
+    //TODO: See if the getTuples method should return a list of tuples or an array of tuples
+    /**
+     * Get all the tuples of the table
+     * @param indices The indices of the tuples to get
+     * @return The tuples of the table
+     * @throws DoNotExistsException If the table does not exist
+     */
+    public Tuple[] getTuples(List<Integer> indices) throws DoNotExistsException {
+        Tuple[] tuples = new Tuple[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            tuples[i] = getTuple(indices.get(i));
+        }
+        return tuples;
     }
 
     /**

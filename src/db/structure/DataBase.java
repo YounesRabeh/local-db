@@ -1,10 +1,16 @@
 package db.structure;
 
 import db.tools.DbTools;
+import environment.WorkspaceInit;
+import rules.exceptions.NotUniqueException;
 import systemx.exceptions.DoNotExistsException;
 import systemx.exceptions.FailedToCreateException;
 
+import java.io.File;
 import java.util.*;
+
+import static db.tools.DbTools.assignDbLocation;
+import static environment.WorkspaceMaker.assignTableFile;
 
 /**
  * Represents a database with tables, where each table is identified by its name.
@@ -13,10 +19,20 @@ import java.util.*;
 public class DataBase {
     /** The name of the database */
     private final String dbName;
+    /** The location of the database */
+    private final File dbLocation;
     /** The tables of the database */
     private HashMap<String, Table> dbTables = new HashMap<>();
     /** The names of the tables in the database */
     private Set<String> tableNames = new HashSet<>();
+
+
+    public DataBase(String dbName)
+            throws FailedToCreateException, NotUniqueException, DoNotExistsException {
+        this.dbName = dbName;
+        this.dbLocation = assignDbLocation(this);
+        addElements(DbTools.getTablesInDataBase(dbLocation)); //setup already existing tables
+    }
 
     /**
      * Creates a database with the given name and tables
@@ -25,6 +41,7 @@ public class DataBase {
      */
     public DataBase(String dbName, Table... tables) throws FailedToCreateException {
         this.dbName = dbName;
+        this.dbLocation = WorkspaceInit.getInstance().getWorkspaceLocation();
         addElements(List.of(tables));
     }
 
@@ -35,6 +52,7 @@ public class DataBase {
      */
     public DataBase(String dbName, List<Table> tableList) throws FailedToCreateException {
         this.dbName = dbName;
+        this.dbLocation = assignDbLocation(this);
         addElements(tableList);
     }
 
@@ -42,13 +60,14 @@ public class DataBase {
      * Adds elements to the database
      * @param collection The collection of elements to add
      */
-    private void addElements(Collection<Table> collection ) throws FailedToCreateException {
+    private void addElements(Collection<Table> collection) throws FailedToCreateException {
         for (Table table : collection) {
             final String tableName = table.getName();
             if (tableNames.add(tableName)) {
                 this.dbTables.put(tableName, table);
-                DbTools.createTableFile(table.getTableFile());
-
+                if (!table.getTableFile().exists()){
+                    DbTools.createTableFile(table.getTableFile());
+                } //else the file exists, just assign
             }
         }
     }

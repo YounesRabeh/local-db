@@ -1,4 +1,4 @@
-package rules.constraints;
+package rules.notes;
 
 import rules.exceptions.ConstraintsErrors;
 import rules.exceptions.NotUniqueException;
@@ -85,8 +85,12 @@ public class Constraints implements ConstraintsErrors {
      * Get the set of constraints names.
      * @return The constraints all names of the constraints contained in the list
      */
-    public Set<String> getConstraintsNames() {
-        return constraintsNames;
+    public List<String> getConstraintsNames() {
+        List<String> names = new ArrayList<>();
+        for (Constraint constraint : constraints) {
+            names.add(constraint.getName());
+        }
+        return names;
     }
 
     /**

@@ -1,7 +1,7 @@
 package db.objects;
 
-import rules.constraints.Constraint;
-import rules.constraints.Constraints;
+import rules.notes.Constraint;
+import rules.notes.Constraints;
 import systemx.exceptions.DoNotExistsException;
 
 

@@ -1,9 +1,14 @@
 package db.tools;
 
+import java.util.List;
 import systemx.utils.CsvTools;
 import java.io.File;
+import java.util.ArrayList;
 
 import systemx.exceptions.DoNotExistsException;
+import systemx.utils.FileManager;
+
+//TODO: add the override row in CSV tools
 
 public final class TableTools {
     private TableTools() {}
@@ -16,18 +21,63 @@ public final class TableTools {
      * @throws DoNotExistsException If the file does not exist
      */
     public static void columnNamesSetup(File file, String[] columnNames) throws DoNotExistsException {
-        CsvTools.deleteRow(file, 0);
-        CsvTools.insertRow(file, 0, columnNames);
+        if (file.length() == 0) {
+            CsvTools.appendRow(file, columnNames);
+            return;
+        }
+        final int newColumnState = CsvTools.getRow(file, 0).length - columnNames.length;
+        CsvTools.overrideRow(file, 0, columnNames);
+
+        if (newColumnState != 0){
+            refactorTable(file, columnNames.length);
+        }
+    }
+
+    //FIXME: the refarctor doesn't work, add the override file in CSV tools
+    public static void refactorTable(File file, int newColumnNumber) throws DoNotExistsException {
+        List<String[]> refactoredContent = new ArrayList<>();
+        for (int i = 1; i < FileManager.countLines(file); i++) {
+            String[] row = CsvTools.getRow(file, i);
+            String[] newRow = new String[newColumnNumber];
+
+            final int columnState = row.length - newColumnNumber;
+            if (row.length == newColumnNumber) {
+                break;
+            }
+
+            //CROP:
+            if (columnState > 0){
+                for (int j = 0; j < newColumnNumber; j++){
+                    newRow[j] = row[j];
+                }
+            }
+            if (columnState < 0){
+                for (int j = 0; j < newColumnNumber; j++){
+                    if (j < row.length) {
+                        newRow[j] = row[j];
+                        continue;
+                    }
+                    break;
+                }
+            }
+
+            //override
+            refactoredContent.add(newRow);
+        }
+        CsvTools.overrideFile(file, refactoredContent);
     }
 
     /**
      * Gets the row of the table
-     * @param file The file of the table
+     * @param tableFile The file of the table
      * @param index The index of the row
      * @return The row of the table
      */
-    public static String[] getRow(File file, int index) throws DoNotExistsException {
-        return CsvTools.getRow(file, index);
+    public static String[] getRow(File tableFile, int index) throws DoNotExistsException {
+        if (FileManager.countLines(tableFile) <= index) {
+            throw new DoNotExistsException("Row " + index, tableFile.toString());
+        }
+        return CsvTools.getRow(tableFile, index);
     }
 
     /**
@@ -47,6 +97,9 @@ public final class TableTools {
      * @throws DoNotExistsException If the file does not exist
      */
     public static void deleteRow(File tableFile, int index) throws DoNotExistsException {
+        if (FileManager.countLines(tableFile) <= index){
+            throw new DoNotExistsException("Row " + index, tableFile.toString());
+        }
         CsvTools.deleteRow(tableFile, index);
     }
 
