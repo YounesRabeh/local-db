@@ -30,7 +30,8 @@ public final class TableTools {
         //CsvTools.overrideRow(file, 0, columnNames);
 
         if (newColumnState != 0){
-            refactorTable(file, columnNames.length);
+
+            refactorTable(file, columnNames);
         }
     }
 
@@ -41,9 +42,11 @@ public final class TableTools {
      * @param newColumnNumber The new number of columns
      * @throws DoNotExistsException If the file does not exist
      */
-    public static void refactorTable(File file, int newColumnNumber) throws DoNotExistsException {
+    public static void refactorTable(File file, String[] columnNames) throws DoNotExistsException {
         List<String[]> refactoredContent = new ArrayList<>();
-        for (int i = 0; i < FileManager.countLines(file); i++) {
+        int newColumnNumber = columnNames.length;
+        refactoredContent.add(columnNames);
+        for (int i = 1; i < FileManager.countLines(file); i++) {
             String row = FileManager.getFileLine(file, i);
             String[] columns = row.split(",");
             String[] newRow;

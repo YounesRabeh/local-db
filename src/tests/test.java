@@ -34,7 +34,6 @@ public class test {
             //columns.addConstraint(new Constraint("height", Float.class));
             HashMap<String, Table> tables = db.getDbTables();
 
-            //FIXME: correct the refactor
             final String TABLE_NAME = "table1";
             final String COLUMN_NAME = "weight";
             Table tb = tables.get(TABLE_NAME);
@@ -47,6 +46,14 @@ public class test {
             //tb.addColumn(new Constraint("sport", String.class));
             String[] values = {"Salvini", "48", "matteo.lega.it", "1.78", "Via Roma 1", "1234567890"};
             tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
+            tb.useOriginalColumnsRef();
+            tb.addColumn(new Constraint("height", String.class));
+            tb.addTuple(new Tuple(tb.getColumnsConstraints(), "Pepe", "25", "pepe.calabrese.it", "1.75"));
+            tb.addColumn(new Constraint("sport", String.class));
+            //tb.deleteTuple(7);
+
+            Tuple tuple = tb.getTuple(1);
+            System.out.println(tuple.toString());
             //FIXME: fix the refactor in TableTools, so if the columns are less than the new ones,
             // it adds the missing ones, and if they are more, it crops the extra ones
 
@@ -76,18 +83,19 @@ public class test {
 
             //System.out.println(Arrays.toString(tuple.values()));
 
-            if (tb.getColumnType(COLUMN_NAME).equals(Float.class)) {
-                System.out.println("The first value is a float");
-                //Float num = Float.valueOf(tuple.getValue(COLUMN_NAME));
-                //System.out.println(num);
-            }
+//            if (tb.getColumnType(COLUMN_NAME).equals(Float.class)) {
+//                System.out.println("The first value is a float");
+//                //Float num = Float.valueOf(tuple.getValue(COLUMN_NAME));
+//                //System.out.println(num);
+//            }
 
         } catch (NotUniqueException e ){
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+
         } catch (FailedToCreateException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         } catch (DoNotExistsException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }
