@@ -32,7 +32,6 @@ public class test {
             );
 
             //columns.addConstraint(new Constraint("height", Float.class));
-
             HashMap<String, Table> tables = db.getDbTables();
 
             //FIXME: correct the refactor
@@ -48,7 +47,15 @@ public class test {
             //tb.addColumn(new Constraint("sport", String.class));
             String[] values = {"Salvini", "48", "matteo.lega.it", "1.78", "Via Roma 1", "1234567890"};
             tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
-            tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
+            //FIXME: fix the refactor in TableTools, so if the columns are less than the new ones,
+            // it adds the missing ones, and if they are more, it crops the extra ones
+
+//            tb.overrideColumns(new Constraints(
+//                    new Constraint("weight", Float.class),
+//                    new Constraint("sport", String.class),
+//                    new Constraint("phone", String.class)
+//            ));
+            //tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
 
             //tables.get("table1").useOriginalColumnsRef();
 //            tables.get("table3").overrideColumns(new Constraints(

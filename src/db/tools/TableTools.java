@@ -27,7 +27,7 @@ public final class TableTools {
             return;
         }
         final int newColumnState = CsvTools.getRow(file, 0).length - columnNames.length;
-        CsvTools.overrideRow(file, 0, columnNames);
+        //CsvTools.overrideRow(file, 0, columnNames);
 
         if (newColumnState != 0){
             refactorTable(file, columnNames.length);

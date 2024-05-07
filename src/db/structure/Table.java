@@ -39,10 +39,12 @@ public class Table {
         this.tableName = tableName;
         this.columnConstrains = columnConstrainsSetup(columns);
         this.originalColumnsConstrainsRef = columns;
-        //FIXME: the table file is created even if the table is not added to the database
+        //FIX@ME: the table file is created even if the table is not added to the database
         TABLE_FILE = assignTableFile(this);
         //WorkspaceMaker.createTableFile(TABLE_FILE);
-        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
+        if (!TABLE_FILE.exists()) {
+            TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
+        } else System.out.println( tableName + " is already present, use overrideColumns() to override the columns");
     }
 
     /**
