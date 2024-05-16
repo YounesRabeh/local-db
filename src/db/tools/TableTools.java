@@ -26,37 +26,63 @@ public final class TableTools {
             CsvTools.appendRow(file, columnNames);
             return;
         }
-        final int newColumnState = CsvTools.getRow(file, 0).length - columnNames.length;
+        final String[] actualColumnNames = CsvTools.getRow(file, 0);
+        final int newColumnState = actualColumnNames.length - columnNames.length;
         //CsvTools.overrideRow(file, 0, columnNames);
 
         if (newColumnState != 0){
-
-            refactorTable(file, columnNames);
+            //FIXME: the refactor doesn't work, append row works , override row also works,
+            refactorTable(file, columnNames, getIndicesToDelete(actualColumnNames, columnNames));
         }
+    }
+
+    private static int[] getIndicesToDelete(String[] actualColumnNames, String[] newColumnNames){
+        List<Integer> indicesToDelete = new ArrayList<>();
+        for (int i = 0; i < actualColumnNames.length; i++) {
+            if (!Arrays.asList(newColumnNames).contains(actualColumnNames[i])){
+                indicesToDelete.add(i);
+            }
+        }
+        return indicesToDelete.stream().mapToInt(i -> i).toArray();
     }
 
     //FIXME: the refactor doesn't work, add the override file in CSV tools
     /**
      * Refactors the table to have a new number of columns
      * @param file The file of the table
-     * @param newColumnNumber The new number of columns
+     * @param columnNames The new number of columns
      * @throws DoNotExistsException If the file does not exist
      */
-    public static void refactorTable(File file, String[] columnNames) throws DoNotExistsException {
+    public static void refactorTable(
+            File file,
+            String[] columnNames,
+            int... indices
+    ) throws DoNotExistsException {
         List<String[]> refactoredContent = new ArrayList<>();
         int newColumnNumber = columnNames.length;
         refactoredContent.add(columnNames);
+
         for (int i = 1; i < FileManager.countLines(file); i++) {
             String row = FileManager.getFileLine(file, i);
             String[] columns = row.split(",");
             String[] newRow;
 
+            //TODO: get the indices to delete or add
             final int columnNumber = columns.length;
             final int columnState  = columnNumber - newColumnNumber;
 
             //CROP:
             if (columnState > 0){
-                newRow = Arrays.copyOf(columns, newColumnNumber);
+                //FIXME: deleting certain indices doesn't work
+                List<Integer> indicesToDelete = Arrays.stream(indices).boxed().toList();
+                List<String> modifiedRow = new ArrayList<>();
+                for (int j = 0; j < columnNumber; j++) {
+                    if (!indicesToDelete.contains(j)) {
+                        modifiedRow.add(columns[j]);
+                    }
+                }
+                newRow = modifiedRow.toArray(new String[0]);
+                //newRow = Arrays.copyOf(columns, newColumnNumber); //work if not delete a column in the middle
             }
             //EXPAND:
             else if (columnState < 0){

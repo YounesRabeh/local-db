@@ -2,15 +2,16 @@ package db.structure;
 
 import java.util.List;
 import java.io.File;
-
 import db.objects.Tuple;
 import db.tools.TableTools;
-import environment.WorkspaceMaker;
 import rules.notes.Constraint;
 import rules.notes.Constraints;
+import systemx.utils.FileManager;
+
 import rules.exceptions.NotUniqueException;
 import systemx.exceptions.DoNotExistsException;
 import systemx.exceptions.FailedToCreateException;
+
 
 import static environment.WorkspaceMaker.assignTableFile;
 
@@ -39,12 +40,23 @@ public class Table {
         this.tableName = tableName;
         this.columnConstrains = columnConstrainsSetup(columns);
         this.originalColumnsConstrainsRef = columns;
-        //FIX@ME: the table file is created even if the table is not added to the database
         TABLE_FILE = assignTableFile(this);
         //WorkspaceMaker.createTableFile(TABLE_FILE);
+        String[] columnNames = getColumnNames();
         if (!TABLE_FILE.exists()) {
-            TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
-        } else System.out.println( tableName + " is already present, use overrideColumns() to override the columns");
+            TableTools.columnNamesSetup(TABLE_FILE, columnNames);
+        } else{
+            columnConstrains = createColumnsConstraints(columnNames);
+            System.out.println( tableName + " is already present, use overrideColumns() to override the columns");
+        }
+    }
+
+    private Constraints createColumnsConstraints(String[] columnNames) throws NotUniqueException {
+        Constraints columns = new Constraints();
+        for (String columnName : columnNames) {
+            columns.addConstraint(new Constraint(columnName, String.class));
+        }
+        return columns;
     }
 
     /**
@@ -112,12 +124,16 @@ public class Table {
     }
 
     /**
-     * Deletes a list of columns from the table
-     * @param columns The list of columns to delete
+     * Deletes columns from the table
+     * @param columnNames The names of the columns to delete
      */
-    public void deleteColumn(List<Constraint> columns) throws NotUniqueException, DoNotExistsException {
-        deleteColumn(columns.toArray(new Constraint[0]));
+    public void deleteColumn(String... columnNames) throws DoNotExistsException {
+        for (String column : columnNames) {
+            this.columnConstrains.deleteConstraint(column);
+        }
+        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
+
 
     /**
      * Returns the columns constraints of the table
@@ -196,7 +212,6 @@ public class Table {
             //
             //TODO: add the possibility to add a tuple with less/more values than the columns
             //
-
             throw new DoNotExistsException("Tuple values do not match the columns of the table");
         } //FIXME: check if the values are cast-able to the column data types
         TableTools.addRow(TABLE_FILE, tuple.values());
@@ -250,17 +265,31 @@ public class Table {
         return new Tuple(columnConstrains, TableTools.getRow(this.TABLE_FILE, index));
     }
 
-    //TODO: See if the getTuples method should return a list of tuples or an array of tuples
+    //TO@DO: See if the getTuples method should return a list of tuples or an array of tuples
+    //choose List
     /**
      * Get all the tuples of the table
      * @param indices The indices of the tuples to get
      * @return The tuples of the table
      * @throws DoNotExistsException If the table does not exist
      */
-    public Tuple[] getTuples(List<Integer> indices) throws DoNotExistsException {
-        Tuple[] tuples = new Tuple[indices.size()];
-        for (int i = 0; i < indices.size(); i++) {
-            tuples[i] = getTuple(indices.get(i));
+    public List<Tuple> getTuples(List<Integer> indices) throws DoNotExistsException {
+        List<Tuple> tuples = new java.util.ArrayList<>();
+        for (int index : indices) {
+            tuples.add(getTuple(index));
+        }
+        return tuples;
+    }
+
+    /**
+     * Get all the tuples of the table
+     * @return The tuples of the table
+     * @throws DoNotExistsException If the table does not exist
+     */
+    public List<Tuple> getAllTuples() throws DoNotExistsException {
+        List<Tuple> tuples = new java.util.ArrayList<>();
+        for (int index = 1; index < FileManager.countLines(TABLE_FILE); index++) {
+            tuples.add(getTuple(index));
         }
         return tuples;
     }

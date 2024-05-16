@@ -10,7 +10,6 @@ import systemx.exceptions.DoNotExistsException;
  * @param values The values of the tuple
  */
 public record Tuple(Constraints constraints, String... values) {
-
     /**
      * Gets the value at the given index
      * @param index The index of the value

@@ -60,10 +60,10 @@ public final class DbTools {
         for (File file : files) {
             if (file.toPath().endsWith(".csv")) {
                 tables.add(
-                        new Table(
-                                file.getName(),
-                                new Constraints((Constraint) List.of(CsvTools.getColumnsTitles(file)))
-                        )
+                    new Table(
+                        file.getName(),
+                        new Constraints((Constraint) List.of(CsvTools.getColumnsTitles(file)))
+                    )
                 );
             }
         }

@@ -53,12 +53,12 @@ public class Constraints implements ConstraintsErrors {
     /**
      * Deletes a constraint from the list of constraints.
      * @param constraint The constraint to delete
-     * @throws NotUniqueException If the constraint is not in the list
+     * @throws DoNotExistsException If the constraint is not in the list
      */
-    public void deleteConstraint(Constraint constraint) throws NotUniqueException {
+    public void deleteConstraint(Constraint constraint) throws DoNotExistsException {
         if (constraintsNames.remove(constraint.getName())) {
             constraints.remove(constraint);
-        } else throw new NotUniqueException(constraint.getName());
+        } else throw new DoNotExistsException(constraint.getName());
     }
 
     /**

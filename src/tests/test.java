@@ -30,7 +30,6 @@ public class test {
                     new Table("table2", columns),
                     new Table("table3", columns)
             );
-
             //columns.addConstraint(new Constraint("height", Float.class));
             HashMap<String, Table> tables = db.getDbTables();
 
@@ -38,22 +37,26 @@ public class test {
             final String COLUMN_NAME = "weight";
             Table tb = tables.get(TABLE_NAME);
 
-            tb.addColumn(
-                    new Constraint("weight", Float.class),
-                    new Constraint("address", String.class),
-                    new Constraint("phone", String.class)
-            );
+//            tb.addColumn(
+//                    new Constraint("weight", Float.class),
+//                    new Constraint("address", String.class),
+//                    new Constraint("phone", String.class)
+//            );
             //tb.addColumn(new Constraint("sport", String.class));
-            String[] values = {"Salvini", "48", "matteo.lega.it", "1.78", "Via Roma 1", "1234567890"};
+            String[] values = {"Salvini", "48", "matteo.lega.it", "Via Roma 1", "1234567890"};
+
+            //FIXME: adding a smaller tuple than the columns constraints, it should add the missing onespv
+            // and if it is bigger, it should crop the extra ones
             tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
-            tb.useOriginalColumnsRef();
-            tb.addColumn(new Constraint("height", String.class));
-            tb.addTuple(new Tuple(tb.getColumnsConstraints(), "Pepe", "25", "pepe.calabrese.it", "1.75"));
+            //tb.useOriginalColumnsRef();
+            //tb.addColumn(new Constraint("height", String.class));
+            //tb.addTuple(new Tuple(tb.getColumnsConstraints(), "Pepe", "25", "pepe.calabrese.it", "1.75", "Via Napoli 2", "0987654321"));
             tb.addColumn(new Constraint("sport", String.class));
+            tb.deleteColumn("weight");
             //tb.deleteTuple(7);
 
-            Tuple tuple = tb.getTuple(1);
-            System.out.println(tuple.toString());
+//            Tuple tuple = tb.getTuple(1);
+//            System.out.println(tuple.toString());
             //FIXME: fix the refactor in TableTools, so if the columns are less than the new ones,
             // it adds the missing ones, and if they are more, it crops the extra ones
 
