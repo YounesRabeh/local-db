@@ -1,11 +1,16 @@
 package db.structure;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.io.File;
+import java.util.Objects;
+
 import db.objects.Tuple;
 import db.tools.TableTools;
 import rules.notes.Constraint;
 import rules.notes.Constraints;
+import systemx.utils.CsvTools;
 import systemx.utils.FileManager;
 
 import rules.exceptions.NotUniqueException;
@@ -23,8 +28,6 @@ public class Table {
     private final String tableName;
     /** The columns of the table */
     private Constraints columnConstrains;
-    /** The original ref columns of the table */
-    private final Constraints originalColumnsConstrainsRef;
     /** The file of the table */
     private final File TABLE_FILE;
     /** The index of the column names */
@@ -39,21 +42,20 @@ public class Table {
             NotUniqueException, DoNotExistsException, FailedToCreateException {
         this.tableName = tableName;
         this.columnConstrains = columnConstrainsSetup(columns);
-        this.originalColumnsConstrainsRef = columns;
         TABLE_FILE = assignTableFile(this);
         //WorkspaceMaker.createTableFile(TABLE_FILE);
         String[] columnNames = getColumnNames();
         if (!TABLE_FILE.exists()) {
             TableTools.columnNamesSetup(TABLE_FILE, columnNames);
         } else{
-            columnConstrains = createColumnsConstraints(columnNames);
+            this.columnConstrains = createColumnsConstraints();
             System.out.println( tableName + " is already present, use overrideColumns() to override the columns");
         }
     }
 
-    private Constraints createColumnsConstraints(String[] columnNames) throws NotUniqueException {
+    private Constraints createColumnsConstraints() throws NotUniqueException, DoNotExistsException {
         Constraints columns = new Constraints();
-        for (String columnName : columnNames) {
+        for (String columnName : CsvTools.getRow(TABLE_FILE, COLUMN_NAMES_INDEX)) {
             columns.addConstraint(new Constraint(columnName, String.class));
         }
         return columns;
@@ -91,15 +93,6 @@ public class Table {
         for (Constraint column : columns) {
             this.columnConstrains.addConstraint(column);
         }
-        TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
-    }
-
-    /**
-     * Uses the original columns reference, discarding the current columns and
-     * using the original columns reference (which can be modified independently of the table)
-     */
-    public void useOriginalColumnsRef() throws DoNotExistsException {
-        this.columnConstrains = originalColumnsConstrainsRef;
         TableTools.columnNamesSetup(TABLE_FILE, getColumnNames());
     }
 
@@ -202,19 +195,29 @@ public class Table {
     //TODO: Row related methods
 
     /**
-     * Adds a tuple to the table
+     * Adds a tuple to the table, best effort to add the tuple to the table.
+     * if the tuple is smaller than the columns constraints, it should add the missing ones as null,
+     * and if it is bigger, it should crop the extra ones
      * @param tuple The tuple to add
      * @throws DoNotExistsException If the tuple is null or the table does not exist
      */
     public void addTuple(Tuple tuple) throws DoNotExistsException {
         if (tuple == null) throw new DoNotExistsException("Tuple is null");
-        if (tuple.values().length != columnConstrains.getConstraints().size()) {
-            //
-            //TODO: add the possibility to add a tuple with less/more values than the columns
-            //
-            throw new DoNotExistsException("Tuple values do not match the columns of the table");
-        } //FIXME: check if the values are cast-able to the column data types
-        TableTools.addRow(TABLE_FILE, tuple.values());
+        final int constraintsSize = columnConstrains.getConstraints().size();
+        final int tupleLengthState = tuple.values().length - constraintsSize;
+        final String[] tupleValues = tuple.values();
+        String[] values = new String[constraintsSize];
+        if (tupleLengthState < 0) {
+            System.arraycopy(tupleValues, 0, values, 0, tupleValues.length);
+            Arrays.fill(values, tupleValues.length, constraintsSize, "null");
+        } else if (tupleLengthState > 0) {
+            System.arraycopy(tupleValues, 0, values, 0, constraintsSize);
+            System.out.println("The tuple is bigger than the columns constraints, the extra values will be cropped");
+        } else {
+            values = tupleValues;
+        }
+        //FIXME: check if the values are cast-able to the column data types
+        TableTools.addRow(TABLE_FILE, values);
     }
 
     /**

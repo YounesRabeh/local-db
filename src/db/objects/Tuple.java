@@ -4,7 +4,6 @@ import rules.notes.Constraint;
 import rules.notes.Constraints;
 import systemx.exceptions.DoNotExistsException;
 
-
 /**
  * A tuple of values, used to represent a row in a database. The values are stored as strings.
  * @param values The values of the tuple

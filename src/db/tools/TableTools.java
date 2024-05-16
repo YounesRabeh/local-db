@@ -28,10 +28,9 @@ public final class TableTools {
         }
         final String[] actualColumnNames = CsvTools.getRow(file, 0);
         final int newColumnState = actualColumnNames.length - columnNames.length;
-        //CsvTools.overrideRow(file, 0, columnNames);
 
         if (newColumnState != 0){
-            //FIXME: the refactor doesn't work, append row works , override row also works,
+            //FIXME: the refactor doesn't work, append row works , override row also works;
             refactorTable(file, columnNames, getIndicesToDelete(actualColumnNames, columnNames));
         }
     }

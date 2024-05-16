@@ -43,16 +43,16 @@ public class test {
 //                    new Constraint("phone", String.class)
 //            );
             //tb.addColumn(new Constraint("sport", String.class));
-            String[] values = {"Salvini", "48", "matteo.lega.it", "Via Roma 1", "1234567890"};
+            String[] values = {"Salvini", "48", "matteo.lega.it", "Via Roma 1", "basketball", "0987654321"};
 
-            //FIXME: adding a smaller tuple than the columns constraints, it should add the missing onespv
+            //FIXME: adding a smaller tuple than the columns constraints, it should add the missing ones
             // and if it is bigger, it should crop the extra ones
             tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
-            //tb.useOriginalColumnsRef();
             //tb.addColumn(new Constraint("height", String.class));
-            //tb.addTuple(new Tuple(tb.getColumnsConstraints(), "Pepe", "25", "pepe.calabrese.it", "1.75", "Via Napoli 2", "0987654321"));
-            tb.addColumn(new Constraint("sport", String.class));
-            tb.deleteColumn("weight");
+            tb.addTuple(new Tuple(tb.getColumnsConstraints(), "Pepe", "25", "pepe.calabrese.it", "1.75", "Via Napoli 2", "0987654321"));
+            //tb.addColumn(new Constraint("sport", String.class));
+            tb.deleteColumn("name");
+
             //tb.deleteTuple(7);
 
 //            Tuple tuple = tb.getTuple(1);
