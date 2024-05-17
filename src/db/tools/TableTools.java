@@ -1,7 +1,7 @@
 package db.tools;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Arrays;
 import systemx.utils.CsvTools;
 import java.io.File;
 import java.util.ArrayList;
@@ -29,12 +29,17 @@ public final class TableTools {
         final String[] actualColumnNames = CsvTools.getRow(file, 0);
         final int newColumnState = actualColumnNames.length - columnNames.length;
 
-        if (newColumnState != 0){
-            //FIXME: the refactor doesn't work, append row works , override row also works;
-            refactorTable(file, columnNames, getIndicesToDelete(actualColumnNames, columnNames));
-        }
+
+        refactorTable(file, columnNames, getIndicesToDelete(actualColumnNames, columnNames));
+
     }
 
+    /**
+     * Gets the indices of the columns to delete
+     * @param actualColumnNames The actual column names
+     * @param newColumnNames The new column names
+     * @return The indices of the columns to delete
+     */
     private static int[] getIndicesToDelete(String[] actualColumnNames, String[] newColumnNames){
         List<Integer> indicesToDelete = new ArrayList<>();
         for (int i = 0; i < actualColumnNames.length; i++) {
@@ -45,7 +50,6 @@ public final class TableTools {
         return indicesToDelete.stream().mapToInt(i -> i).toArray();
     }
 
-    //FIXME: the refactor doesn't work, add the override file in CSV tools
     /**
      * Refactors the table to have a new number of columns
      * @param file The file of the table
@@ -81,7 +85,6 @@ public final class TableTools {
                     }
                 }
                 newRow = modifiedRow.toArray(new String[0]);
-                //newRow = Arrays.copyOf(columns, newColumnNumber); //work if not delete a column in the middle
             }
             //EXPAND:
             else if (columnState < 0){
@@ -95,6 +98,7 @@ public final class TableTools {
         }
         CsvTools.overrideFile(file, refactoredContent);
     }
+
 
     /**
      * Adds a row to the table

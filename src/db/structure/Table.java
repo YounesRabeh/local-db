@@ -10,6 +10,7 @@ import db.objects.Tuple;
 import db.tools.TableTools;
 import rules.notes.Constraint;
 import rules.notes.Constraints;
+import systemx.exceptions.InterfaceErrors;
 import systemx.utils.CsvTools;
 import systemx.utils.FileManager;
 
@@ -23,7 +24,7 @@ import static environment.WorkspaceMaker.assignTableFile;
 /**
  * Represents a table in a database, with columns and rows.
  */
-public class Table {
+public class Table implements InterfaceErrors {
     /** The name of the table */
     private final String tableName;
     /** The columns of the table */
@@ -46,10 +47,15 @@ public class Table {
         //WorkspaceMaker.createTableFile(TABLE_FILE);
         String[] columnNames = getColumnNames();
         if (!TABLE_FILE.exists()) {
+
             TableTools.columnNamesSetup(TABLE_FILE, columnNames);
         } else{
             this.columnConstrains = createColumnsConstraints();
-            System.out.println( tableName + " is already present, use overrideColumns() to override the columns");
+            System.out.println(InterfaceErrors.ERROR_MESSAGE +
+                    tableName +
+                    " is already present, use overrideColumns() to override the columns" +
+                    InterfaceErrors.RESET
+            );
         }
     }
 
@@ -109,7 +115,7 @@ public class Table {
      * Deletes columns from the table
      * @param columns The columns to delete
      */
-    public void deleteColumn(Constraint... columns) throws NotUniqueException, DoNotExistsException {
+    public void deleteColumn(Constraint... columns) throws DoNotExistsException {
         for (Constraint column : columns) {
            this.columnConstrains.deleteConstraint(column);
         }
@@ -212,7 +218,10 @@ public class Table {
             Arrays.fill(values, tupleValues.length, constraintsSize, "null");
         } else if (tupleLengthState > 0) {
             System.arraycopy(tupleValues, 0, values, 0, constraintsSize);
-            System.out.println("The tuple is bigger than the columns constraints, the extra values will be cropped");
+            System.out.println(InterfaceErrors.WARNING_MESSAGE +
+                    "The tuple is bigger than the columns constraints, the extra values will be cropped" +
+                    InterfaceErrors.RESET
+            );
         } else {
             values = tupleValues;
         }

@@ -10,6 +10,12 @@ import java.io.File;
 
 public final class WorkspaceMaker{
 
+    /**
+     * Assigns a table file to a table
+     * @param table The table to assign the file
+     * @return The file of the table
+     * @throws FailedToCreateException If the file could not be created
+     */
     public static File assignTableFile(Table table) throws FailedToCreateException {
         File path = WorkspaceInit.getInstance().getWorkspaceLocation();
         if (path == null) throw new FailedToCreateException("Table file path is null");

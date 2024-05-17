@@ -18,9 +18,12 @@ public class WorkspaceInit implements DatabaseLocations {
             //TODO: in the future detect the jar entry main function and create the dir in the same dir
             WORKSPACE = new File("out/artifacts/local_db_jar" + "/localDB_new/" + WORKSPACE_NAME);
             PathResolver.createDirectory(WORKSPACE.getAbsolutePath());
+            //TODO: create the tables dir
+            //TODO: create the workspace directories
+            //TODO: if the workspace already exists, do not create it, just set the path
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create " + WORKSPACE_NAME);
         }
     }
 

@@ -1,2 +1,10 @@
 make systemx.exceptions.InterfaceError public [done]
 abstract the error colors, emojis and messages in an interface
+
+make the first DBMS class
+setup the environment for the databases and the tables.
+
+
+
+
+

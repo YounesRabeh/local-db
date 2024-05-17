@@ -47,11 +47,12 @@ public class test {
 
             //FIXME: adding a smaller tuple than the columns constraints, it should add the missing ones
             // and if it is bigger, it should crop the extra ones
+            //tb.overrideColumns(columns);
             tb.addTuple(new Tuple(tb.getColumnsConstraints(), values));
             //tb.addColumn(new Constraint("height", String.class));
             tb.addTuple(new Tuple(tb.getColumnsConstraints(), "Pepe", "25", "pepe.calabrese.it", "1.75", "Via Napoli 2", "0987654321"));
             //tb.addColumn(new Constraint("sport", String.class));
-            tb.deleteColumn("name");
+            //tb.deleteColumn("age");
 
             //tb.deleteTuple(7);
 
@@ -76,9 +77,9 @@ public class test {
 
 
 
-            for (Constraint column : tables.get(TABLE_NAME).getColumnsConstraintsList()) {
-                System.out.println(column.getName());
-            }
+//            for (Constraint column : tables.get(TABLE_NAME).getColumnsConstraintsList()) {
+//                System.out.println(column.getName());
+//            }
             //Tuple tuple1 = new Tuple(tb.getColumnsConstraints(), "Salvini", "48", "matteo@lega.it");
             //Tuple tuple = tb.getTuple(1);
             //tb.addTuple(tuple1);
